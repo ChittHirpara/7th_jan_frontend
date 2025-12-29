@@ -1,10 +1,13 @@
-import { apiClient } from './axios';
-import type { EthicalNotice } from '../types/analysis';
+import api from "./axios";
 
 export const ethicsApi = {
-  getEthicalNotice: async (): Promise<EthicalNotice> => {
-    const response = await apiClient.get<EthicalNotice>('/api/ethical-notice');
-    return response.data;
+  checkCompliance: async (payload: any) => {
+    const { data } = await api.post("/api/ethics/check", payload);
+    return data;
+  },
+
+  getPolicies: async () => {
+    const { data } = await api.get("/api/ethics/policies");
+    return data;
   },
 };
-

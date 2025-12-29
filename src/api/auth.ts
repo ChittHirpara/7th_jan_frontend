@@ -1,10 +1,20 @@
-import { apiClient } from './axios';
-import type { AuthResponse } from '../types/auth';
+import api from "./axios";
 
 export const authApi = {
-  googleLogin: async (token: string): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>('/api/auth/google', { token });
-    return response.data;
+  googleLogin: async (googleIdToken: string) => {
+    const { data } = await api.post("/auth/google", {
+      token: googleIdToken,
+    });
+    return data;
+  },
+
+  getCurrentUser: async () => {
+    const { data } = await api.get("/auth/me");
+    return data;
+  },
+
+  logout: async () => {
+    await api.post("/auth/logout");
+    localStorage.removeItem("sentinai_token");
   },
 };
-

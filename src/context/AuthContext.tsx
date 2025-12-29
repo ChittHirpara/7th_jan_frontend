@@ -1,77 +1,70 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import type { ReactNode } from 'react';
-import type { User, AuthResponse } from '../types/auth';
-import { authApi } from '../api/auth';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import type { ReactNode } from "react";
+import { authApi } from "../api/auth";
 
 interface AuthContextType {
-  user: User | null;
-  token: string | null;
-  loading: boolean;
-  login: (googleToken: string) => Promise<void>;
-  logout: () => void;
+  user: any;
   isAuthenticated: boolean;
+  loading: boolean;
+  login: (googleIdToken: string) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | null>(null);
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored auth data on mount
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const token = localStorage.getItem("sentinai_token");
 
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
+    if (!token) {
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+
+    authApi
+      .getCurrentUser()
+      .then((res) => {
+        if (res.success) {
+          setUser(res.user);
+        } else {
+          localStorage.removeItem("sentinai_token");
+        }
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  const login = async (googleToken: string) => {
-    try {
-      const response: AuthResponse = await authApi.googleLogin(googleToken);
-      setToken(response.token);
-      setUser(response.user);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
-    } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
+  const login = async (googleIdToken: string) => {
+    const res = await authApi.googleLogin(googleIdToken);
+
+    if (res.success) {
+      localStorage.setItem("sentinai_token", res.token);
+      setUser(res.user);
+    } else {
+      throw new Error("Login failed");
     }
   };
 
-  const logout = () => {
-    setToken(null);
+  const logout = async () => {
+    await authApi.logout();
     setUser(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        token,
+        isAuthenticated: !!user,
         loading,
         login,
         logout,
-        isAuthenticated: !!token && !!user,
       }}
     >
       {children}
@@ -79,3 +72,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   );
 };
 
+export const useAuth = () => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
+  return ctx;
+};

@@ -154,3 +154,4 @@ export const AnalysisPage = () => {
   );
 };
 
+export default AnalysisPage;
