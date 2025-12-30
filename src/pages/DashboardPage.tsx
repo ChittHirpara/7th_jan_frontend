@@ -58,22 +58,22 @@ const DashboardPage = () => {
     ? [
         {
           name: "Low",
-          value: metrics.severityDistribution.Low,
+          value: metrics.severityDistribution.LOW,
           color: COLORS.Low,
         },
         {
           name: "Medium",
-          value: metrics.severityDistribution.Medium,
+          value: metrics.severityDistribution.MEDIUM,
           color: COLORS.Medium,
         },
         {
           name: "High",
-          value: metrics.severityDistribution.High,
+          value: metrics.severityDistribution.HIGH,
           color: COLORS.High,
         },
         {
           name: "Critical",
-          value: metrics.severityDistribution.Critical,
+          value: metrics.severityDistribution.CRITICAL,
           color: COLORS.Critical,
         },
       ].filter((item) => item.value > 0)
@@ -185,9 +185,9 @@ const DashboardPage = () => {
           {/* Line */}
           <div className="bg-white p-6 rounded shadow">
             <h3 className="text-lg font-semibold mb-4">Risk Trend</h3>
-            {metrics.riskTrends.length > 0 ? (
+            {(metrics.riskTrend ?? []).length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={metrics.riskTrends}>
+                <LineChart data={metrics.riskTrend ?? []}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis domain={[0, 100]} />
