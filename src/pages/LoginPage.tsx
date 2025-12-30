@@ -37,6 +37,7 @@ const LoginPage = () => {
               console.error(err);
               setError("Authentication failed");
             }
+            // console.log("Google credential:", credentialResponse.credential);
           }}
           onError={() => {
             setError("Google sign-in failed");

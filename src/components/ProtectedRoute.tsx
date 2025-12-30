@@ -9,7 +9,9 @@ interface Props {
 const ProtectedRoute = ({ children }: Props) => {
   const { isAuthenticated, loading } = useAuth();
 
-  if (loading) return null;
+  if (loading) {
+    return <div className="p-6 text-gray-600">Loading...</div>;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

@@ -1,12 +1,24 @@
-export interface User {
-  _id: string;
-  email: string;
+/* --------------------------------------------------
+ * Auth User (from backend toPublicProfile)
+ * -------------------------------------------------- */
+export interface AuthUser {
+  id: string;
   name: string;
-  picture?: string;
+  email: string;
+  avatar?: string;
+  onboarded: boolean;
 }
 
-export interface AuthResponse {
+/* --------------------------------------------------
+ * Auth Responses
+ * -------------------------------------------------- */
+export interface GoogleLoginResponse {
+  success: boolean;
   token: string;
-  user: User;
+  user: AuthUser;
 }
 
+export interface CurrentUserResponse {
+  success: boolean;
+  user: AuthUser;
+}

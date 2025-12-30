@@ -53,8 +53,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
-    await authApi.logout();
-    setUser(null);
+    try {
+      await authApi.logout();
+    } finally {
+      localStorage.removeItem("sentinai_token"); // ✅ REQUIRED
+      setUser(null);
+    }
   };
 
   return (
