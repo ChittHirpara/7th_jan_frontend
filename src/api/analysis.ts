@@ -1,20 +1,41 @@
-import { apiClient } from './axios';
-import type { AnalysisRequest, AnalysisResult, DashboardMetrics } from '../types/analysis';
+import api from "./axios";
+import type {
+  AnalysisRequest,
+  AnalysisResult,
+  DashboardMetrics,
+  AnalysisHistoryItem,
+} from "../types/analysis";
 
 export const analysisApi = {
-  analyze: async (data: AnalysisRequest): Promise<AnalysisResult> => {
-    const response = await apiClient.post<AnalysisResult>('/api/analyze', data);
-    return response.data;
+  // ---------------------------------
+  // POST /api/analyze
+  // ---------------------------------
+  analyze: async (
+    payload: AnalysisRequest
+  ): Promise<AnalysisResult> => {
+    const response = await api.post("/api/analyze", payload);
+
+    const analysis = response.data.analysis;
+
+    return {
+      riskScore: analysis.overallRiskScore,
+      vulnerabilities: analysis.vulnerabilities ?? [],
+    };
   },
 
-  getHistory: async (): Promise<AnalysisResult[]> => {
-    const response = await apiClient.get<AnalysisResult[]>('/api/analyze/history');
-    return response.data;
+  // ---------------------------------
+  // GET /api/analyze/history
+  // ---------------------------------
+  getHistory: async (): Promise<AnalysisHistoryItem[]> => {
+    const response = await api.get("/api/analyze/history");
+    return response.data.analyses;
   },
 
+  // ---------------------------------
+  // GET /api/dashboard/metrics
+  // ---------------------------------
   getDashboardMetrics: async (): Promise<DashboardMetrics> => {
-    const response = await apiClient.get<DashboardMetrics>('/api/dashboard/metrics');
-    return response.data;
+    const response = await api.get("/api/dashboard/metrics");
+    return response.data.metrics;
   },
 };
-

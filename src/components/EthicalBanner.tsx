@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { ethicsApi } from '../api/ethics';
-import type { EthicalNotice } from '../types/analysis';
+import { useEffect, useState } from "react";
+import { ethicsApi } from "../api/ethics";
+import type { EthicalNotice } from "../types/analysis";
 
 export const EthicalBanner = () => {
   const [notice, setNotice] = useState<EthicalNotice | null>(null);
@@ -12,7 +12,7 @@ export const EthicalBanner = () => {
         const data = await ethicsApi.getEthicalNotice();
         setNotice(data);
       } catch (error) {
-        console.error('Failed to fetch ethical notice:', error);
+        console.error("Failed to fetch ethical notice:", error);
       }
     };
     fetchNotice();
@@ -31,9 +31,9 @@ export const EthicalBanner = () => {
             {notice.content}
           </p>
           <p className="text-xs text-yellow-600 mt-2">
-            <strong>Important:</strong> This is a READ-ONLY, ETHICAL security analysis tool.
-            No code execution. No exploit testing. All payloads are simulated and NON-EXECUTABLE.
-            For educational purposes only.
+            <strong>Important:</strong> This is a READ-ONLY, ETHICAL security
+            analysis tool. No code execution. No exploit testing. All payloads
+            are simulated and NON-EXECUTABLE. For educational purposes only.
           </p>
         </div>
         <button
@@ -47,4 +47,3 @@ export const EthicalBanner = () => {
     </div>
   );
 };
-
