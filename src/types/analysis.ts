@@ -1,53 +1,39 @@
-// -----------------------------
-// Shared enums & types
-// -----------------------------
-export type InputType = "code" | "api" | "sql" | "config";
+export type InputType = 'code' | 'api' | 'sql' | 'config';
 
-export type Severity = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+export type Severity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 
-// -----------------------------
-// Vulnerability
-// -----------------------------
 export interface Vulnerability {
-  id: string;
-  name: string;
+  _id: string;
+  type: string;
   severity: Severity;
+  location: string;
   description: string;
-  attackerLogic?: string;
-  defenderLogic?: string;
-  secureCodeFix?: string;
+  attackerLogic: string;
+  defenderLogic: string;
+  secureCodeFix: string;
+  simulatedPayload: string;
+  killChainStage: string;
+  impact: {
+    technical: string;
+    business: string;
+  };
 }
 
-// -----------------------------
-// Analyze request
-// -----------------------------
+export interface AnalysisResult {
+  _id: string;
+  inputType: InputType;
+  content: string;
+  riskScore: number;
+  vulnerabilities: Vulnerability[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AnalysisRequest {
   inputType: InputType;
   content: string;
 }
 
-// -----------------------------
-// Analyze response (frontend-normalized)
-// -----------------------------
-export interface AnalysisResult {
-  riskScore: number;
-  vulnerabilities: Vulnerability[];
-}
-
-// -----------------------------
-// History
-// -----------------------------
-export interface AnalysisHistoryItem {
-  id: string;
-  inputType: InputType;
-  overallRiskScore: number;
-  vulnerabilityCount: number;
-  analysisDate: string;
-}
-
-// -----------------------------
-// Dashboard
-// -----------------------------
 export interface DashboardMetrics {
   totalScans: number;
   totalVulnerabilities: number;
@@ -57,15 +43,15 @@ export interface DashboardMetrics {
     HIGH: number;
     CRITICAL: number;
   };
-  riskTrend: {
+  riskTrend: Array<{
     date: string;
     averageRisk: number;
-  }[];
-  recentScans: {
-    _id: string;
-    inputType: InputType;
-    riskScore: number;
-    vulnerabilities: Vulnerability[];
-    createdAt: string;
-  }[];
+  }>;
+  recentScans: AnalysisResult[];
+}
+
+export interface EthicalNotice {
+  title: string;
+  content: string;
+  lastUpdated: string;
 }
